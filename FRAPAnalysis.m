@@ -1,16 +1,22 @@
 clear 
 close all
-% Interval=0.07970; %(sec)
-Interval=0.145; %(sec)
-PreBleachFrame=2;
-RightAfterBleachframe=3;
-FitRange=30;
 
 
 
 [inputimage, path]=uigetfile(strcat(pwd,'\.tif'));
 cd (path)
 tiff_info = imfinfo(inputimage);
+
+prompt = {'Frame interval (s):','Prebleach frames:','Right after bleach frame:','Fit range:'};
+dlgtitle = 'Input';
+dims = [1 35];
+definput = {'0.0884','2','3','30'};
+answer = inputdlg(prompt,dlgtitle,dims,definput)
+Interval=str2double(answer{1});
+PreBleachFrame=str2num(answer{2});
+RightAfterBleachframe=str2num(answer{3});
+FitRange=str2num(answer{4});
+
 if FitRange>size(tiff_info, 1)
     FitRange=size(tiff_info, 1);
 end
