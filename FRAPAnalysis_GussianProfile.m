@@ -31,7 +31,7 @@ end
 
 imData_d=double(imData);
 pre_imData=imData_d(:,:,1:PreBleachFrame);
-im_fit_Data=imData_d(:,:,RightAfterBleachframe:size(imData_d,3))...
+im_fit_Data=imData_d(:,:,FitRange_start:size(imData_d,3))...
     ./ mean(pre_imData,3);
 
 
@@ -77,10 +77,10 @@ for k=1:size(im_fit_Data,3)
     end
 end
 % % % % % 
-% % % OUTPUT FIGURES - MAKE DIST
+% % OUTPUT FIGURES - MAKE DIST
 outfolder=strcat(pwd,'\Gaussian-Dist-',name);
 mkdir (outfolder);
-for frame=1:5:size(im_fit_Data,3)
+for frame=1:size(im_fit_Data,3)
     
     clims=[0 1];
     colormap 'jet'
@@ -104,44 +104,46 @@ for frame=1:5:size(im_fit_Data,3)
     outname=strcat(outfolder,'\',sprintf('%03d.png',frame));
     exportgraphics(gcf,outname,"Resolution",600);
 end
-% f_color=figure;
-% pos1 = [0.05 0.25 0.4 0.4];
-% pos2 = [0.55 0.25 0.4 0.4];
-% pos3 = [0.70 0.72 0.25 0.02];
-% ax1=subplot('Position',pos1);
-% ax2=subplot('Position',pos2);
-% ax3=subplot('Position',pos3);
-% subplot(ax1);
-% axtoolbar('Visible','off');
-% imagesc(im_fit_Data(:,:,1),clims)
-% hold on
-% % scatter(center(1,1),center(1,2),'MarkerFaceColor','k')
-% hold off
-% subplot(ax2);
-% imagesc(RegressionDist(:,:,1),clims)
-% hold on
-% % scatter(center(1,1),center(1,2),'MarkerFaceColor','k')
-% hold off
-% subplot(ax3);
-% CM2=colormap(ax3, jet);
-% y = [0:0.01:1];
-% x = [0:0.5:1.0];
-% [X,Y] = meshgrid(y,flip(y));
-% imagesc(X);
-% ax3.YAxis.Visible='off';
-% ax3.XTick=[1 50 101];
-% ax3.XTickLabel={'0',' 0.5','1'};
-% xlabel('Intensity');
-% axtoolbar('Visible','off');
 
-
-
-
-% sliceViewer(RegressionDist);
-% colormap ('jet');
-% sliceViewer(im_fit_Data);
-% colormap ('jet');
-% disp(DiffCoef);
+% % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % % f_color=figure;
+% % % % % % % % % % % % % % % % % % % % % % % pos1 = [0.05 0.25 0.4 0.4];
+% % % % % % % % % % % % % % % % % % % % % % % pos2 = [0.55 0.25 0.4 0.4];
+% % % % % % % % % % % % % % % % % % % % % % % pos3 = [0.70 0.72 0.25 0.02];
+% % % % % % % % % % % % % % % % % % % % % % % ax1=subplot('Position',pos1);
+% % % % % % % % % % % % % % % % % % % % % % % ax2=subplot('Position',pos2);
+% % % % % % % % % % % % % % % % % % % % % % % ax3=subplot('Position',pos3);
+% % % % % % % % % % % % % % % % % % % % % % % subplot(ax1);
+% % % % % % % % % % % % % % % % % % % % % % % axtoolbar('Visible','off');
+% % % % % % % % % % % % % % % % % % % % % % % imagesc(im_fit_Data(:,:,1),clims)
+% % % % % % % % % % % % % % % % % % % % % % % hold on
+% % % % % % % % % % % % % % % % % % % % % % % % scatter(center(1,1),center(1,2),'MarkerFaceColor','k')
+% % % % % % % % % % % % % % % % % % % % % % % hold off
+% % % % % % % % % % % % % % % % % % % % % % % subplot(ax2);
+% % % % % % % % % % % % % % % % % % % % % % % imagesc(RegressionDist(:,:,1),clims)
+% % % % % % % % % % % % % % % % % % % % % % % hold on
+% % % % % % % % % % % % % % % % % % % % % % % % scatter(center(1,1),center(1,2),'MarkerFaceColor','k')
+% % % % % % % % % % % % % % % % % % % % % % % hold off
+% % % % % % % % % % % % % % % % % % % % % % % subplot(ax3);
+% % % % % % % % % % % % % % % % % % % % % % % CM2=colormap(ax3, jet);
+% % % % % % % % % % % % % % % % % % % % % % % y = [0:0.01:1];
+% % % % % % % % % % % % % % % % % % % % % % % x = [0:0.5:1.0];
+% % % % % % % % % % % % % % % % % % % % % % % [X,Y] = meshgrid(y,flip(y));
+% % % % % % % % % % % % % % % % % % % % % % % imagesc(X);
+% % % % % % % % % % % % % % % % % % % % % % % ax3.YAxis.Visible='off';
+% % % % % % % % % % % % % % % % % % % % % % % ax3.XTick=[1 50 101];
+% % % % % % % % % % % % % % % % % % % % % % % ax3.XTickLabel={'0',' 0.5','1'};
+% % % % % % % % % % % % % % % % % % % % % % % xlabel('Intensity');
+% % % % % % % % % % % % % % % % % % % % % % % axtoolbar('Visible','off');
+% % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % % sliceViewer(RegressionDist);
+% % % % % % % % % % % % % % % % % % % % % % % colormap ('jet');
+% % % % % % % % % % % % % % % % % % % % % % % sliceViewer(im_fit_Data);
+% % % % % % % % % % % % % % % % % % % % % % % colormap ('jet');
+% % % % % % % % % % % % % % % % % % % % % % % disp(DiffCoef);
 
 outname=strcat(pwd,'\Gaussian-',name,'.mat');
 save(outname);
