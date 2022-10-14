@@ -6,13 +6,14 @@ close all
 [inputimage, path]=uigetfile(strcat(pwd,'\.tif'));
 listfile=dir(strcat(path,'00*.tif'));
 cd (path)
+tiff_info_first = imfinfo(listfile(1).name);
 
 prompt = {'Frame interval (s):','Prebleach frames:',...
     'Right after bleach frame:','Fit start frame:',...
     'Pixel size (pix/um):','Number of total frame:'};
 dlgtitle = 'Input';
 dims = [1 35];
-definput = {'0.0884','2','3','3','4.0111','60'};
+definput = {'0.0884','2','3','3', sprintf('%.4f',tiff_info_first(1).XResolution),'60'};
 answer = inputdlg(prompt,dlgtitle,dims,definput);
 Interval=str2double(answer{1});
 PreBleachFrame=str2num(answer{2});
