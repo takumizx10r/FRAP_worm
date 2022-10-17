@@ -16,7 +16,7 @@ for i=1:LengthFolder
     prompt = {'Index:','Molecular Weight:'};
     dlgtitle = 'Input';
     dims = [1 35];
-    definput = {'F.G.','X'};
+    definput = {'F.G.','548'};
     answer = inputdlg(prompt,dlgtitle,dims,definput);
     
     cd (InputFolderList{i})
@@ -34,7 +34,6 @@ for i=1:LengthFolder
             Initial_parameters=cat(1,Initial_parameters,Fit_initial_Para);
             Index=cat(1,Index,answer{1});
             M=cat(1,M,str2double(answer{2}) );
-
         end
     end
     totalfile=totalfile+1;
@@ -46,15 +45,19 @@ b.BoxFaceColor='k';
 b.MarkerStyle='+';
 b.Notch='off'
 ax=gca; ax.FontSize=18; ax.FontName='Arial';
-xlabel('Fluorophore')
-ylabel('Diffusion coefficient \fontname{Times}\itD\rm\fontname{Arial} (μm^2/s)')
-
-ttest2(T.DiffusionCoefficient(T.Index=='F.G.'),T.DiffusionCoefficient(T.Index=='FITC'))
-ttest2(T.DiffusionCoefficient(T.Index=='F.G.'),T.DiffusionCoefficient(T.Index=='RhoB'))
-ttest2(T.DiffusionCoefficient(T.Index=='F.G.'),T.DiffusionCoefficient(T.Index=='Uranine'))
-
+% xlabel('Fluorophore')
+ylabel('Diffusion coefficient \fontname{Times}\itD\rm\fontname{Arial} (μm^2/s)');
 outputfolder=uigetdir(pwd);
 exportgraphics(gcf,strcat(outputfolder,'\Result.png'),"Resolution",600);
+
+
+% ttest2(T.DiffusionCoefficient(T.Index=='F.G.'),T.DiffusionCoefficient(T.Index=='FITC'))
+% ttest2(T.DiffusionCoefficient(T.Index=='F.G.'),T.DiffusionCoefficient(T.Index=='RhoB'))
+% ttest2(T.DiffusionCoefficient(T.Index=='F.G.'),T.DiffusionCoefficient(T.Index=='Uranine'))
+
+% p_wilk=ranksum(T.DiffusionCoefficient(T.Index=='WT (N2)'),T.DiffusionCoefficient(T.Index=='et35'))
+
+[p_anova,tb_anova,stats]=anova1(T.DiffusionCoefficient,T.Index);
 
 % % % % 
 % % Error propagation

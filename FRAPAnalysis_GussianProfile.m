@@ -8,12 +8,12 @@ listfile=dir(strcat(path,'00*.tif'));
 cd (path)
 tiff_info_first = imfinfo(listfile(1).name);
 
-prompt = {'Frame interval (s):','Prebleach frames:',...
+prompt = {'Frame interval (s):','Num of prebleach frames:',...
     'Right after bleach frame:','Fit start frame:',...
     'Pixel size (pix/um):','Number of total frame:'};
 dlgtitle = 'Input';
 dims = [1 35];
-definput = {'0.0884','2','3','3', sprintf('%.4f',tiff_info_first(1).XResolution),'60'};
+definput = {'0.0884','2','3','3', sprintf('%.5f',tiff_info_first(1).XResolution),'60'};
 answer = inputdlg(prompt,dlgtitle,dims,definput);
 Interval=str2double(answer{1});
 PreBleachFrame=str2num(answer{2});
@@ -22,10 +22,25 @@ FitRange_start=str2num(answer{4});
 pix_size=str2double(answer{5});
 Num_frame=str2num(answer{6});
 
+
+answer_fig = questdlg('Would you like to make fiugres and movie?', ...
+	'Question','Yes','No','Cancel');
+% Handle response
+switch answer_fig
+    case 'Yes'
+        figure_config = 1;
+    case 'No'
+        figure_config= 0;
+    case 'Cancel'
+        return;
+end
+
+
 for file=1:size(listfile,1)
-    clear imData
+    clear imData imData_d im_fit_Data
     inputimage=listfile(file).name;
     tiff_info = imfinfo(inputimage);
+
     for i=1:Num_frame
         imData(:,:,i) = imread(inputimage, i);
     end
@@ -42,10 +57,10 @@ for file=1:size(listfile,1)
     FRAPData=readmatrix(inputFRAPdata,NumHeaderLines=1);
     w=sqrt(FRAPData(1,2)/pi);
     center=round(FRAPData(1,7:8)*pix_size);
-    imagesc(im_fit_Data(:,:,1))
-    hold on
-    scatter(center(1,1),center(1,2),'ok')
-    hold off
+%     imagesc(im_fit_Data(:,:,1))
+%     hold on
+%     scatter(center(1,1),center(1,2),'ok')
+%     hold off
 
     % % % FITTING INITIAL PARAMETERS
     Fit_initial_Para=func_leastsquare_with_GaussianDist_determineInitialPara(im_fit_Data(:,:,1),center);
@@ -65,7 +80,7 @@ for file=1:size(listfile,1)
     % % % FITTING DIFFUSION COEFFICIENT WITH INITIAL PARAMETERS
     FitPara=...
         func_leastsquare_with_GaussianDist(im_fit_Data(:,:,:),center,Fit_initial_Para,Interval);
-    DiffCoef=FitPara/pix_size;
+    DiffCoef=FitPara/pix_size/pix_size;
     % % % OBTAIN REGRESSION DISTRIBUTION AT EACH TIMES
     for k=1:size(im_fit_Data,3)
         for j=1:size(im_fit_Data,1)
@@ -79,33 +94,41 @@ for file=1:size(listfile,1)
     end
     % % % % %
     % % OUTPUT FIGURES - MAKE DIST
-    outfolder=strcat(pwd,'\Gaussian-Dist-',name);
-    mkdir (outfolder);
-    for frame=1:size(im_fit_Data,3)
+    if figure_config==1
+        outfolder=strcat(pwd,'\Gaussian-Dist-',name);
+        mkdir (outfolder);
+        for frame=1:size(im_fit_Data,3)
 
-        clims=[0 1];
-        colormap 'jet'
-        tiledlayout(2,1)
-        ax1 = nexttile; ax1.FontName='Arial'; ax1.FontSize=18;
-        mesh(im_fit_Data(:,:,frame));
-        zlim([0 1.2])
-        hold on
-        imagesc(im_fit_Data(:,:,frame),clims)
-        hold off
-        xlabel 'x'; ylabel 'y'; zlabel 'Intensity';
-        text(size(im_fit_Data,2)*0.3,size(im_fit_Data,1),1.4,sprintf('%.1f (ms)',Interval*(frame-1)*1000))
-        ax2 = nexttile;
-        ax2.FontName='Arial'; ax2.FontSize=18;
-        mesh(RegressionDist(:,:,frame));
-        zlim([0 1.2])
-        hold on
-        imagesc(RegressionDist(:,:,frame),clims)
-        hold off
-        xlabel 'x'; ylabel 'y'; zlabel 'Intensity';
-        outname=strcat(outfolder,'\',sprintf('%03d.png',frame));
-        exportgraphics(gcf,outname,"Resolution",600);
+            clims=[0 1];
+            colormap 'jet'
+            tiledlayout(2,1)
+            ax1 = nexttile; ax1.FontName='Arial'; ax1.FontSize=18;
+            mesh(im_fit_Data(:,:,frame));
+            zlim([0 1.2])
+            hold on
+            imagesc(im_fit_Data(:,:,frame),clims)
+            hold off
+            xlabel 'x'; ylabel 'y'; zlabel 'Intensity';
+            text(size(im_fit_Data,2)*0.3,size(im_fit_Data,1),1.4,sprintf('%.1f (ms)',Interval*(frame-1)*1000))
+            ax2 = nexttile;
+            ax2.FontName='Arial'; ax2.FontSize=18;
+            mesh(RegressionDist(:,:,frame));
+            zlim([0 1.2])
+            hold on
+            imagesc(RegressionDist(:,:,frame),clims)
+            hold off
+            xlabel 'x'; ylabel 'y'; zlabel 'Intensity';
+            outname=strcat(outfolder,'\',sprintf('%03d.png',frame));
+            exportgraphics(gcf,outname,"Resolution",600);
+            fig(frame)=getframe(gcf);
+        end
+        v=VideoWriter(strcat(outfolder,'\movie.mp4'));
+        v.FrameRate=size(im_fit_Data,3)/3;
+        open(v);
+        writeVideo(v,fig);
+        close(v);
+        clear v fig
     end
-
     % % % % % % % % % % % % % % % % % % % % % %
     % % % % % % % % % % % % % % % % % % % % % % % f_color=figure;
     % % % % % % % % % % % % % % % % % % % % % % % pos1 = [0.05 0.25 0.4 0.4];
@@ -152,14 +175,14 @@ for file=1:size(listfile,1)
 end
 
 
-function f=func_bessel(para,time,w,K0)
-if time==0
-    time=1E-20;
-end
-f=1.0+ ( exp(-K0)-1.0 )    ...
-    * ( 1.0 - exp(-(w*w)/(2.0*para(1)*time))     ...
-    * ( besselj( 0,(w*w/(2.0*para(1)*time) ) ) + besselj( 1,(w*w/(2.0*para(1)*time) ) ) )   );
-end
+% % % % % % % % % % % % % % % % function f=func_bessel(para,time,w,K0)
+% % % % % % % % % % % % % % % % if time==0
+% % % % % % % % % % % % % % % %     time=1E-20;
+% % % % % % % % % % % % % % % % end
+% % % % % % % % % % % % % % % % f=1.0+ ( exp(-K0)-1.0 )    ...
+% % % % % % % % % % % % % % % %     * ( 1.0 - exp(-(w*w)/(2.0*para(1)*time))     ...
+% % % % % % % % % % % % % % % %     * ( besselj( 0,(w*w/(2.0*para(1)*time) ) ) + besselj( 1,(w*w/(2.0*para(1)*time) ) ) )   );
+% % % % % % % % % % % % % % % % end
 
 function F_=func_C(para_ini,r,t,D)
 F_= para_ini(1)-para_ini(2)/(para_ini(3)+4.0*D*t)...
