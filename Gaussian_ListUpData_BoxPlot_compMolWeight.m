@@ -48,12 +48,8 @@ ax=gca; ax.FontSize=18; ax.FontName='Arial';
 % xlabel('Fluorophore')
 ylabel('Diffusion coefficient \fontname{Times}\itD\rm\fontname{Arial} (μm^2/s)');
 outputfolder=uigetdir(pwd);
-exportgraphics(gcf,strcat(outputfolder,'\Result.png'),"Resolution",600);
-
-
-% ttest2(T.DiffusionCoefficient(T.Index=='F.G.'),T.DiffusionCoefficient(T.Index=='FITC'))
-% ttest2(T.DiffusionCoefficient(T.Index=='F.G.'),T.DiffusionCoefficient(T.Index=='RhoB'))
-% ttest2(T.DiffusionCoefficient(T.Index=='F.G.'),T.DiffusionCoefficient(T.Index=='Uranine'))
+savefig(strcat(outputfolder,'\Result.fig'))
+% exportgraphics(gcf,strcat(outputfolder,'\Result.png'),"Resolution",600);
 
 % p_wilk=ranksum(T.DiffusionCoefficient(T.Index=='WT (N2)'),T.DiffusionCoefficient(T.Index=='et35'))
 
@@ -61,11 +57,11 @@ exportgraphics(gcf,strcat(outputfolder,'\Result.png'),"Resolution",600);
 % multcompare(stats);
 % % % % 
 % % Error propagation
-M2=mean(M(T.Index=='RhoB'));
-D2=mean(T.DiffusionCoefficient(T.Index=='RhoB'));
+M2=mean(M(T.Index=='Rhodamin B'));
+D2=mean(T.DiffusionCoefficient(T.Index=='Rhodamin B'));
 D1=mean(T.DiffusionCoefficient(T.Index=='F.G.'));
 M_FG_RhoB(1,1)=M2*( D2/D1 )^3;
-sigma2=(3*M2*D2^2/D1^3)^2*(std(T.DiffusionCoefficient(T.Index=='RhoB')))^2 ...
+sigma2=(3*M2*D2^2/D1^3)^2*(std(T.DiffusionCoefficient(T.Index=='Rhodamin B')))^2 ...
     + (-3*M2*D2^3/D1^4)^2*(std(T.DiffusionCoefficient(T.Index=='F.G.')))^2;
 sigma_FG=sqrt(sigma2);
 M_FG_RhoB(1,2)=sigma_FG;

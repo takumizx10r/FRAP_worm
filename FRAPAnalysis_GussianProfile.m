@@ -56,11 +56,7 @@ for file=1:size(listfile,1)
     FRAPData=readmatrix(inputFRAPdata,NumHeaderLines=1);
     w=sqrt(FRAPData(1,2)/pi);
     center=round(FRAPData(1,7:8)*pix_size);
-    %     imagesc(im_fit_Data(:,:,1))
-    %     hold on
-    %     scatter(center(1,1),center(1,2),'ok')
-    %     hold off
-
+   
     % % % FITTING INITIAL PARAMETERS
     Fit_initial_Para=func_leastsquare_with_GaussianDist_determineInitialPara(im_fit_Data(:,:,1),center);
     % % % OBTAIN REGRESSION DISTRIBUTION AT T=0
@@ -118,27 +114,33 @@ for file=1:size(listfile,1)
             % % %             hold off
             % % %             xlabel 'x'; ylabel 'y'; zlabel 'Intensity';
 
-            pos1 = [0.05 0.25 0.4 0.4];
+            pos1 = [0.1 0.25 0.4 0.4];
             pos2 = [0.55 0.25 0.4 0.4];
-            pos3 = [0.70 0.72 0.25 0.02];
+            pos3 = [0.10 0.7 0.25 0.02];
             ax1=subplot('Position',pos1);
             ax2=subplot('Position',pos2);
             ax3=subplot('Position',pos3);
             ax1.FontName='Arial'; ax1.FontSize=16;
             ax2.FontName='Arial'; ax2.FontSize=16;
             ax3.FontName='Arial'; ax3.FontSize=16;
+
             subplot(ax1);
             axtoolbar('Visible','off');
             imagesc(im_fit_Data(:,:,frame),clims);
-            text(size(im_fit_Data,2)*0.1,size(im_fit_Data,1)*0.1,sprintf('%.1f (ms)',Interval*(frame-1)*1000));
+            text(size(im_fit_Data,2)*0.1,size(im_fit_Data,1)*0.1,...
+                sprintf('%.0f (ms)',Interval*(frame-1)*1000), ...
+                "Color",'w');
             xlabel '\itx \rm(pixel)';
             ylabel '\ity \rm(pixel)';
-            
-
+         
             subplot(ax2);
             imagesc(RegressionDist(:,:,frame),clims)
+            text(size(im_fit_Data,2)*0.1,size(im_fit_Data,1)*0.1,...
+                sprintf('%.0f (ms)',Interval*(frame-1)*1000), ...
+                "Color",'w');
             xlabel '\itx \rm(pixel)';
-            ylabel '\ity \rm(pixel)';
+            yticks([]);
+
             subplot(ax3);
             CM2=colormap(ax3, jet);
             y = [0:0.01:1];
@@ -148,20 +150,27 @@ for file=1:size(listfile,1)
             ax3.YAxis.Visible='off';
             ax3.XTick=[1 50 101];
             ax3.XTickLabel={'0',' 0.5','1'};
+            ax3.XAxisLocation = 'top';
             xlabel('Intensity');
             axtoolbar('Visible','off');
 
-
-            outname=strcat(outfolder,'\',sprintf('%03d.png',frame));
-            exportgraphics(gcf,outname,"Resolution",600);
-            fig(frame)=getframe(gcf);
+            f=gcf;
+            f.Position=[1 1 600 600]; f.Units='pixels';
+            fig(frame)=getframe(f);
+        
+            outname=strcat(outfolder,'\',sprintf('%03d.fig',frame));
+            savefig(outname);
+%             outname=strcat(outfolder,'\',sprintf('%03d.png',frame));
+%             exportgraphics(gcf,outname,"Resolution",600);
+            
         end
-        v=VideoWriter(strcat(outfolder,'\movie.mp4'));
+        v=VideoWriter(strcat(outfolder,'\movie'),"MPEG-4");
         v.FrameRate=size(im_fit_Data,3)/3;
         open(v);
         writeVideo(v,fig);
         close(v);
         clear v fig
+        close all
     end
     % % % % % % % % % % % % % % % % % % % % % %
     % % % % % % % % % % % % % % % % % % % % % % % f_color=figure;
@@ -181,15 +190,6 @@ for file=1:size(listfile,1)
 
 end
 
-
-% % % % % % % % % % % % % % % % function f=func_bessel(para,time,w,K0)
-% % % % % % % % % % % % % % % % if time==0
-% % % % % % % % % % % % % % % %     time=1E-20;
-% % % % % % % % % % % % % % % % end
-% % % % % % % % % % % % % % % % f=1.0+ ( exp(-K0)-1.0 )    ...
-% % % % % % % % % % % % % % % %     * ( 1.0 - exp(-(w*w)/(2.0*para(1)*time))     ...
-% % % % % % % % % % % % % % % %     * ( besselj( 0,(w*w/(2.0*para(1)*time) ) ) + besselj( 1,(w*w/(2.0*para(1)*time) ) ) )   );
-% % % % % % % % % % % % % % % % end
 
 function F_=func_C(para_ini,r,t,D)
 F_= para_ini(1)-para_ini(2)/(para_ini(3)+4.0*D*t)...
