@@ -58,7 +58,7 @@ exportgraphics(gcf,strcat(outputfolder,'\Result.png'),"Resolution",600);
 % p_wilk=ranksum(T.DiffusionCoefficient(T.Index=='WT (N2)'),T.DiffusionCoefficient(T.Index=='et35'))
 
 [p_anova,tb_anova,stats]=anova1(T.DiffusionCoefficient,T.Index);
-
+% multcompare(stats);
 % % % % 
 % % Error propagation
 M2=mean(M(T.Index=='RhoB'));

@@ -1,7 +1,7 @@
 function [FitPara] = func_leastsquare_with_GaussianDist(y,center,para_ini,Interval)
 
 
-x0=1;
+x0=0.1;
 A=[];
 b=[];
 Aeq=[];

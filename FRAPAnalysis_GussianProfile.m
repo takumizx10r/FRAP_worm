@@ -2,7 +2,7 @@ clear
 close all
 
 
-
+addpath(pwd);
 [inputimage, path]=uigetfile(strcat(pwd,'\.tif'));
 listfile=dir(strcat(path,'00*.tif'));
 cd (path)
@@ -24,8 +24,7 @@ Num_frame=str2num(answer{6});
 
 
 answer_fig = questdlg('Would you like to make fiugres and movie?', ...
-	'Question','Yes','No','Cancel');
-% Handle response
+    'Question','Yes','No','Cancel');
 switch answer_fig
     case 'Yes'
         figure_config = 1;
@@ -57,10 +56,10 @@ for file=1:size(listfile,1)
     FRAPData=readmatrix(inputFRAPdata,NumHeaderLines=1);
     w=sqrt(FRAPData(1,2)/pi);
     center=round(FRAPData(1,7:8)*pix_size);
-%     imagesc(im_fit_Data(:,:,1))
-%     hold on
-%     scatter(center(1,1),center(1,2),'ok')
-%     hold off
+    %     imagesc(im_fit_Data(:,:,1))
+    %     hold on
+    %     scatter(center(1,1),center(1,2),'ok')
+    %     hold off
 
     % % % FITTING INITIAL PARAMETERS
     Fit_initial_Para=func_leastsquare_with_GaussianDist_determineInitialPara(im_fit_Data(:,:,1),center);
@@ -101,23 +100,58 @@ for file=1:size(listfile,1)
 
             clims=[0 1];
             colormap 'jet'
-            tiledlayout(2,1)
-            ax1 = nexttile; ax1.FontName='Arial'; ax1.FontSize=18;
-            mesh(im_fit_Data(:,:,frame));
-            zlim([0 1.2])
-            hold on
-            imagesc(im_fit_Data(:,:,frame),clims)
-            hold off
-            xlabel 'x'; ylabel 'y'; zlabel 'Intensity';
-            text(size(im_fit_Data,2)*0.3,size(im_fit_Data,1),1.4,sprintf('%.1f (ms)',Interval*(frame-1)*1000))
-            ax2 = nexttile;
-            ax2.FontName='Arial'; ax2.FontSize=18;
-            mesh(RegressionDist(:,:,frame));
-            zlim([0 1.2])
-            hold on
+            % % %             tiledlayout(2,1)
+            % % %             ax1 = nexttile; ax1.FontName='Arial'; ax1.FontSize=18;
+            % % %             mesh(im_fit_Data(:,:,frame));
+            % % %             zlim([0 1.2])
+            % % %             hold on
+            % % %             imagesc(im_fit_Data(:,:,frame),clims)
+            % % %             hold off
+            % % %             xlabel 'x'; ylabel 'y'; zlabel 'Intensity';
+            % % %             text(size(im_fit_Data,2)*0.3,size(im_fit_Data,1),1.4,sprintf('%.1f (ms)',Interval*(frame-1)*1000))
+            % % %             ax2 = nexttile;
+            % % %             ax2.FontName='Arial'; ax2.FontSize=18;
+            % % %             mesh(RegressionDist(:,:,frame));
+            % % %             zlim([0 1.2])
+            % % %             hold on
+            % % %             imagesc(RegressionDist(:,:,frame),clims)
+            % % %             hold off
+            % % %             xlabel 'x'; ylabel 'y'; zlabel 'Intensity';
+
+            pos1 = [0.05 0.25 0.4 0.4];
+            pos2 = [0.55 0.25 0.4 0.4];
+            pos3 = [0.70 0.72 0.25 0.02];
+            ax1=subplot('Position',pos1);
+            ax2=subplot('Position',pos2);
+            ax3=subplot('Position',pos3);
+            ax1.FontName='Arial'; ax1.FontSize=16;
+            ax2.FontName='Arial'; ax2.FontSize=16;
+            ax3.FontName='Arial'; ax3.FontSize=16;
+            subplot(ax1);
+            axtoolbar('Visible','off');
+            imagesc(im_fit_Data(:,:,frame),clims);
+            text(size(im_fit_Data,2)*0.1,size(im_fit_Data,1)*0.1,sprintf('%.1f (ms)',Interval*(frame-1)*1000));
+            xlabel '\itx \rm(pixel)';
+            ylabel '\ity \rm(pixel)';
+            
+
+            subplot(ax2);
             imagesc(RegressionDist(:,:,frame),clims)
-            hold off
-            xlabel 'x'; ylabel 'y'; zlabel 'Intensity';
+            xlabel '\itx \rm(pixel)';
+            ylabel '\ity \rm(pixel)';
+            subplot(ax3);
+            CM2=colormap(ax3, jet);
+            y = [0:0.01:1];
+            x = [0:0.5:1.0];
+            [X,Y] = meshgrid(y,flip(y));
+            imagesc(X);
+            ax3.YAxis.Visible='off';
+            ax3.XTick=[1 50 101];
+            ax3.XTickLabel={'0',' 0.5','1'};
+            xlabel('Intensity');
+            axtoolbar('Visible','off');
+
+
             outname=strcat(outfolder,'\',sprintf('%03d.png',frame));
             exportgraphics(gcf,outname,"Resolution",600);
             fig(frame)=getframe(gcf);
@@ -131,34 +165,7 @@ for file=1:size(listfile,1)
     end
     % % % % % % % % % % % % % % % % % % % % % %
     % % % % % % % % % % % % % % % % % % % % % % % f_color=figure;
-    % % % % % % % % % % % % % % % % % % % % % % % pos1 = [0.05 0.25 0.4 0.4];
-    % % % % % % % % % % % % % % % % % % % % % % % pos2 = [0.55 0.25 0.4 0.4];
-    % % % % % % % % % % % % % % % % % % % % % % % pos3 = [0.70 0.72 0.25 0.02];
-    % % % % % % % % % % % % % % % % % % % % % % % ax1=subplot('Position',pos1);
-    % % % % % % % % % % % % % % % % % % % % % % % ax2=subplot('Position',pos2);
-    % % % % % % % % % % % % % % % % % % % % % % % ax3=subplot('Position',pos3);
-    % % % % % % % % % % % % % % % % % % % % % % % subplot(ax1);
-    % % % % % % % % % % % % % % % % % % % % % % % axtoolbar('Visible','off');
-    % % % % % % % % % % % % % % % % % % % % % % % imagesc(im_fit_Data(:,:,1),clims)
-    % % % % % % % % % % % % % % % % % % % % % % % hold on
-    % % % % % % % % % % % % % % % % % % % % % % % % scatter(center(1,1),center(1,2),'MarkerFaceColor','k')
-    % % % % % % % % % % % % % % % % % % % % % % % hold off
-    % % % % % % % % % % % % % % % % % % % % % % % subplot(ax2);
-    % % % % % % % % % % % % % % % % % % % % % % % imagesc(RegressionDist(:,:,1),clims)
-    % % % % % % % % % % % % % % % % % % % % % % % hold on
-    % % % % % % % % % % % % % % % % % % % % % % % % scatter(center(1,1),center(1,2),'MarkerFaceColor','k')
-    % % % % % % % % % % % % % % % % % % % % % % % hold off
-    % % % % % % % % % % % % % % % % % % % % % % % subplot(ax3);
-    % % % % % % % % % % % % % % % % % % % % % % % CM2=colormap(ax3, jet);
-    % % % % % % % % % % % % % % % % % % % % % % % y = [0:0.01:1];
-    % % % % % % % % % % % % % % % % % % % % % % % x = [0:0.5:1.0];
-    % % % % % % % % % % % % % % % % % % % % % % % [X,Y] = meshgrid(y,flip(y));
-    % % % % % % % % % % % % % % % % % % % % % % % imagesc(X);
-    % % % % % % % % % % % % % % % % % % % % % % % ax3.YAxis.Visible='off';
-    % % % % % % % % % % % % % % % % % % % % % % % ax3.XTick=[1 50 101];
-    % % % % % % % % % % % % % % % % % % % % % % % ax3.XTickLabel={'0',' 0.5','1'};
-    % % % % % % % % % % % % % % % % % % % % % % % xlabel('Intensity');
-    % % % % % % % % % % % % % % % % % % % % % % % axtoolbar('Visible','off');
+
     % % % % % % % % % % % % % % % % % % % % % %
     % % % % % % % % % % % % % % % % % % % % % %
     % % % % % % % % % % % % % % % % % % % % % %

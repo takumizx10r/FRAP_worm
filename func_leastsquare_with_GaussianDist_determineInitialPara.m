@@ -1,6 +1,6 @@
 function [FitPara] = func_leastsquare_with_GaussianDist_determineInitialPara(y,center)
 
-x0=[1, 2, 04];
+x0=[0.9, 5, 10];
 A=[];
 b=[];
 Aeq=[];
