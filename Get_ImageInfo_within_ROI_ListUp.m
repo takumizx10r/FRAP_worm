@@ -18,55 +18,64 @@ for i=1:LengthFolder
     dims = [1 35];
     definput = {'10 mM'};
     answer = inputdlg(prompt,dlgtitle,dims,definput);
-    
+
     cd (InputFolderList{i})
     InputFileList=dir(strcat(InputFolderList{i},'\ResultInRoi-*.mat'));
 
     for j=1:length(InputFileList)
-        
+
         load(strcat(InputFileList(j).folder,'\',InputFileList(j).name), '-mat',...
             'SumInt');
-        
+
         if i==1 && j==1
             Data(j,:)=SumInt;
 
             Index{j,1}=answer{1};
 
             FolerList{j,1}=strcat(InputFileList(j).folder,'\',InputFileList(j).name);
+
+            k=1;
+            Index_child{k}=answer{1};
+            k=k+1;
         else
             Data=cat(1,Data,SumInt);
 
             Index=cat(1,Index,answer{1});
 
             FolerList=cat(1,FolerList,strcat(InputFileList(j).folder,'\',InputFileList(j).name));
+            if strcmp(answer{1},Index_child{k-1,1})
+            else
+                Index_child{k,1}=answer{1};
+                k=k+1;
+            end
         end
+
     end
     totalfile=totalfile+1;
-    
-    
+
+
 end
+
+
+list = Index_child;
+[indx,tf] = listdlg('ListString',list);
+
+GroupIndex_child=str2double(Index_child);
 GroupIndex=str2double(Index);
+
 AllData=[Data, GroupIndex];
-xdata=[30;60;120;180;360;720;1200];
-ydata=[ mean(AllData(GroupIndex==30,1));...
-        mean(AllData(GroupIndex==60,1));...
-        mean(AllData(GroupIndex==120,1));...
-        mean(AllData(GroupIndex==180,1));...
-        mean(AllData(GroupIndex==360,1));...
-        mean(AllData(GroupIndex==720,1));...
-        mean(AllData(GroupIndex==1200,1))];
-error=[ std(AllData(GroupIndex==30,1));...
-        std(AllData(GroupIndex==60,1));...
-        std(AllData(GroupIndex==120,1));...
-        std(AllData(GroupIndex==180,1));...
-        std(AllData(GroupIndex==360,1));...
-        std(AllData(GroupIndex==720,1));...
-        std(AllData(GroupIndex==1200,1))];
+for k=1:length(GroupIndex_child)
+    xdata(k)=GroupIndex_child(k);
+    ydata(k)=mean(AllData(GroupIndex==GroupIndex_child(k),1));
+    error(k)= std(AllData(GroupIndex==GroupIndex_child(k),1));
+end
+
 p=errorbar(xdata,ydata,error,'ks','MarkerFaceColor','k');
 ax=gca; ax.FontSize=18; ax.FontName='Arial';
 xlim([0 max(xdata)*1.1])
 ylim([-inf inf])
 xlabel('Time (min)');
+xlabel('Concentration (mM)');
 ylabel('Intensity');
 outputfolder=uigetdir(pwd);
 savefig(strcat(outputfolder,'\Result.fig'));
@@ -93,7 +102,7 @@ T=table(Data,Index,FolerList);
 % [h_lillie,p_lillie,k_lillie,c_lillie] = lillietest(T.DiffusionCoefficient(T.Index=='Control'));
 
 % p_wilk=ranksum(T.DiffusionCoefficient(T.Index=='WT (N2)'),T.DiffusionCoefficient(T.Index=='et35'))
-% 
+%
 % [p_anova,tb_anova,stats]=anova1(T.DiffusionCoefficient,T.Index);
 % % multcompare(stats);
 
@@ -107,5 +116,5 @@ T=table(Data,Index,FolerList);
 % xlabel('Fluorophore')
 % ylabel('Intensity');
 % savefig(strcat(outputfolder,'\Result.fig'));
-% % % % 
+% % % %
 save(strcat(outputfolder,'\Result.mat'));
