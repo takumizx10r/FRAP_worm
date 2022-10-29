@@ -56,7 +56,7 @@ for file=1:size(listfile,1)
     FRAPData=readmatrix(inputFRAPdata,NumHeaderLines=1);
     w=sqrt(FRAPData(1,2)/pi);
     center=round(FRAPData(1,7:8)*pix_size);
-   
+
     % % % FITTING INITIAL PARAMETERS
     Fit_initial_Para=func_leastsquare_with_GaussianDist_determineInitialPara(im_fit_Data(:,:,1),center);
     % % % OBTAIN REGRESSION DISTRIBUTION AT T=0
@@ -93,7 +93,8 @@ for file=1:size(listfile,1)
         outfolder=strcat(pwd,'\Gaussian-Dist-',name);
         mkdir (outfolder);
         for frame=1:size(im_fit_Data,3)
-
+            f=gcf;
+            f.Position=[1 1 600 600]; f.Units='pixels';
             clims=[0 1];
             colormap 'jet'
             % % %             tiledlayout(2,1)
@@ -114,32 +115,37 @@ for file=1:size(listfile,1)
             % % %             hold off
             % % %             xlabel 'x'; ylabel 'y'; zlabel 'Intensity';
 
-            pos1 = [0.1 0.25 0.4 0.4];
+            pos1 = [0.10 0.25 0.4 0.4];
             pos2 = [0.55 0.25 0.4 0.4];
-            pos3 = [0.10 0.7 0.25 0.02];
+            pos3 = [0.10 0.675 0.25 0.02];
             ax1=subplot('Position',pos1);
             ax2=subplot('Position',pos2);
             ax3=subplot('Position',pos3);
-            ax1.FontName='Arial'; ax1.FontSize=16;
-            ax2.FontName='Arial'; ax2.FontSize=16;
-            ax3.FontName='Arial'; ax3.FontSize=16;
 
             subplot(ax1);
             axtoolbar('Visible','off');
             imagesc(im_fit_Data(:,:,frame),clims);
-            text(size(im_fit_Data,2)*0.1,size(im_fit_Data,1)*0.1,...
+            text(size(im_fit_Data,2)*0.65,size(im_fit_Data,1)*0.1,...
                 sprintf('%.0f (ms)',Interval*(frame-1)*1000), ...
-                "Color",'w');
-            xlabel '\itx \rm(pixel)';
-            ylabel '\ity \rm(pixel)';
-         
+                "Color",'w','FontSize',14);
+%             xlabel '\itx \rm(pixel)';
+%             ylabel '\ity \rm(pixel)';
+% % %             Scale bar
+            hold on
+            plot([size(im_fit_Data,2)*0.1 ; size(im_fit_Data,2)*0.1+pix_size*5],...
+                 [size(im_fit_Data,1)*0.1;size(im_fit_Data,1)*0.1],'-w','LineWidth',1);
+            plot([size(im_fit_Data,2)*0.1 ; size(im_fit_Data,2)*0.1],...
+                 [size(im_fit_Data,1)*0.1;size(im_fit_Data,1)*0.1+pix_size*5],'-w','LineWidth',1);
+            hold off
+            yticks([]);xticks([]);
+% % %             
             subplot(ax2);
             imagesc(RegressionDist(:,:,frame),clims)
-            text(size(im_fit_Data,2)*0.1,size(im_fit_Data,1)*0.1,...
-                sprintf('%.0f (ms)',Interval*(frame-1)*1000), ...
-                "Color",'w');
-            xlabel '\itx \rm(pixel)';
-            yticks([]);
+%             text(size(im_fit_Data,2)*0.7,size(im_fit_Data,1)*0.1,...
+%                 sprintf('%.0f (ms)',Interval*(frame-1)*1000), ...
+%                 "Color",'w','FontSize',12);
+%             xlabel '\itx \rm(pixel)';
+            yticks([]);xticks([]);
 
             subplot(ax3);
             CM2=colormap(ax3, jet);
@@ -148,21 +154,23 @@ for file=1:size(listfile,1)
             [X,Y] = meshgrid(y,flip(y));
             imagesc(X);
             ax3.YAxis.Visible='off';
-            ax3.XTick=[1 50 101];
-            ax3.XTickLabel={'0',' 0.5','1'};
+            ax3.XTick=[1 101];
+            ax3.XTickLabel={'0','1'};
             ax3.XAxisLocation = 'top';
             xlabel('Intensity');
             axtoolbar('Visible','off');
 
-            f=gcf;
-            f.Position=[1 1 600 600]; f.Units='pixels';
+            ax1.FontName='Arial'; ax1.FontSize=14;
+            ax2.FontName='Arial'; ax2.FontSize=14;
+            ax3.FontName='Arial'; ax3.FontSize=14;
+
             fig(frame)=getframe(f);
-        
+
             outname=strcat(outfolder,'\',sprintf('%03d.fig',frame));
             savefig(outname);
-%             outname=strcat(outfolder,'\',sprintf('%03d.png',frame));
-%             exportgraphics(gcf,outname,"Resolution",600);
-            
+%                         outname=strcat(outfolder,'\',sprintf('%03d.png',frame));
+%                         exportgraphics(gcf,outname,"Resolution",600);
+
         end
         v=VideoWriter(strcat(outfolder,'\movie'),"MPEG-4");
         v.FrameRate=size(im_fit_Data,3)/3;
