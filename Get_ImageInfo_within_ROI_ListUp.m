@@ -79,7 +79,7 @@ xlabel('Concentration (mM)');
 ylabel('Intensity');
 outputfolder=uigetdir(pwd);
 savefig(strcat(outputfolder,'\Result.fig'));
-exportgraphics(gcf,strcat(outputfolder,'\Result.png'),"Resolution",600);
+% exportgraphics(gcf,strcat(outputfolder,'\Result.png'),"Resolution",600);
 
 % % % Make Table
 Index=categorical(Index);
