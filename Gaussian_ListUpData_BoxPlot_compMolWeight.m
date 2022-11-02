@@ -47,7 +47,7 @@ T=table(DiffusionCoefficient,Initial_parameters,Index,M,FolerList);
 b=boxchart(categorical(T.Index),T.DiffusionCoefficient);
 b.BoxFaceColor='k';
 b.MarkerStyle='+';
-b.Notch='on';
+b.Notch='off';
 ax=gca; ax.FontSize=18; ax.FontName='Arial';
 % xlabel('Fluorophore')
 ylabel('Diffusion coefficient \fontname{Times}\itD\rm\fontname{Arial} (μm^2/s)');
