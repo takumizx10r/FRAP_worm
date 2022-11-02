@@ -28,6 +28,12 @@ answer_fig = questdlg('Would you like to make fiugres and movie?', ...
 switch answer_fig
     case 'Yes'
         figure_config = 1;
+        prompt = {'Scale bar (um, if 0; no scale bar):'};
+        dlgtitle = 'Input';
+        dims = [1 35];
+        definput = {'5'};
+        answer = inputdlg(prompt,dlgtitle,dims,definput);
+        scalebar=str2double(answer{1});
     case 'No'
         figure_config= 0;
     case 'Cancel'
@@ -128,23 +134,25 @@ for file=1:size(listfile,1)
             text(size(im_fit_Data,2)*0.65,size(im_fit_Data,1)*0.1,...
                 sprintf('%.0f (ms)',Interval*(frame-1)*1000), ...
                 "Color",'w','FontSize',14);
-%             xlabel '\itx \rm(pixel)';
-%             ylabel '\ity \rm(pixel)';
-% % %             Scale bar
-            hold on
-            plot([size(im_fit_Data,2)*0.1 ; size(im_fit_Data,2)*0.1+pix_size*5],...
-                 [size(im_fit_Data,1)*0.1;size(im_fit_Data,1)*0.1],'-w','LineWidth',1);
-            plot([size(im_fit_Data,2)*0.1 ; size(im_fit_Data,2)*0.1],...
-                 [size(im_fit_Data,1)*0.1;size(im_fit_Data,1)*0.1+pix_size*5],'-w','LineWidth',1);
-            hold off
+            %             xlabel '\itx \rm(pixel)';
+            %             ylabel '\ity \rm(pixel)';
+            % % %             Scale bar
+            if scalebar>0
+                hold on
+                plot([size(im_fit_Data,2)*0.1 ; size(im_fit_Data,2)*0.1+pix_size*scalebar],...
+                    [size(im_fit_Data,1)*0.1;size(im_fit_Data,1)*0.1],'-w','LineWidth',1);
+                plot([size(im_fit_Data,2)*0.1 ; size(im_fit_Data,2)*0.1],...
+                    [size(im_fit_Data,1)*0.1;size(im_fit_Data,1)*0.1+pix_size*scalebar],'-w','LineWidth',1);
+                hold off
+            end
+            % % %
             yticks([]);xticks([]);
-% % %             
             subplot(ax2);
             imagesc(RegressionDist(:,:,frame),clims)
-%             text(size(im_fit_Data,2)*0.7,size(im_fit_Data,1)*0.1,...
-%                 sprintf('%.0f (ms)',Interval*(frame-1)*1000), ...
-%                 "Color",'w','FontSize',12);
-%             xlabel '\itx \rm(pixel)';
+            %             text(size(im_fit_Data,2)*0.7,size(im_fit_Data,1)*0.1,...
+            %                 sprintf('%.0f (ms)',Interval*(frame-1)*1000), ...
+            %                 "Color",'w','FontSize',12);
+            %             xlabel '\itx \rm(pixel)';
             yticks([]);xticks([]);
 
             subplot(ax3);
@@ -168,8 +176,8 @@ for file=1:size(listfile,1)
 
             outname=strcat(outfolder,'\',sprintf('%03d.fig',frame));
             savefig(outname);
-%                         outname=strcat(outfolder,'\',sprintf('%03d.png',frame));
-%                         exportgraphics(gcf,outname,"Resolution",600);
+            %                         outname=strcat(outfolder,'\',sprintf('%03d.png',frame));
+            %                         exportgraphics(gcf,outname,"Resolution",600);
 
         end
         v=VideoWriter(strcat(outfolder,'\movie'),"MPEG-4");
