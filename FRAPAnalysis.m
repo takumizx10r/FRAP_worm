@@ -32,7 +32,7 @@ end
 inputFRAPdata=strcat(folder,"\",name,".txt");
 FRAPData=readmatrix(inputFRAPdata,NumHeaderLines=1);
 
-plot(FRAPData(:,1)*Interval,FRAPData(:,3))
+% plot(FRAPData(:,1)*Interval,FRAPData(:,3))
 
 sz=size(FRAPData);
 I1=mean(FRAPData(1:PreBleachFrame ,3) );
@@ -52,7 +52,7 @@ x0=[0.13 0.5 0.9];
 disp(x)
 D=0.88*FRAPData(1,2)./pi ./ ( 4.0*x(2).*log(2));
 disp(D)
-p=plot( (FRAPData(:,1)-PreBleachFrame) * Interval, FRAPData(:,3) ./ I1,'*');
+p=plot( (FRAPData(:,1)-PreBleachFrame-1) * Interval, FRAPData(:,3) ./ I1,'*');
 hold on
 plot(t,F(x,t),'-k' )
 hold off
