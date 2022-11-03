@@ -60,7 +60,7 @@ savefig(strcat(outputfolder,'\Result.fig'));
 % p_wilk=ranksum(T.DiffusionCoefficient(T.Index=='WT (N2)'),T.DiffusionCoefficient(T.Index=='et35'))
 
 [p_anova,tb_anova,stats]=anova1(T.DiffusionCoefficient,T.Index);
-% multcompare(stats);
+% [results,~,~,~]=multcompare(stats);
 % % % % 
 % % Error propagation
 M2=mean(M(T.Index=='Rhodamin B'));
