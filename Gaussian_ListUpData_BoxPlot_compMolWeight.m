@@ -50,6 +50,7 @@ b.MarkerStyle='+';
 b.Notch='off';
 ax=gca; ax.FontSize=18; ax.FontName='Arial';
 % xlabel('Fluorophore')
+% ax.XTickLabel={'Cont.', '5' '10' '20'}
 ylabel('Diffusion coefficient \fontname{Times}\itD\rm\fontname{Arial} (μm^2/s)');
 outputfolder=uigetdir(pwd);
 savefig(strcat(outputfolder,'\Result.fig'));
