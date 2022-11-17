@@ -54,7 +54,8 @@ for file=1:size(listfile,1)
     pre_imData=imData_d(:,:,1:PreBleachFrame);
     im_fit_Data=imData_d(:,:,FitRange_start:size(imData_d,3))...
         ./ mean(pre_imData,3);
-
+    
+    im_fit_Data(im_fit_Data>1.0)=1.0;
 
 
     [folder name ext]=fileparts(inputimage);

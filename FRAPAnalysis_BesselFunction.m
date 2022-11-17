@@ -49,7 +49,7 @@ for i=1:size(t,1)
     F(i,1)=func_bessel(FitPara,t(i),w,K0);
 end
 
-p=plot( (FRAPData(:,1)-PreBleachFrame) * Interval, FRAPData(:,3) ./ I1,'*');
+p=plot( (FRAPData(:,1)-PreBleachFrame-1) * Interval, FRAPData(:,3) ./ I1,'*');
 hold on
 % F = @(x,xdata) 1.0+ ( exp(-x(1))-1.0 )    ...
 %     .* ( 1.0 - exp(-(w*w)/(2.0.*x(2).*t))     ...
