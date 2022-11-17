@@ -20,7 +20,7 @@ for i=1:LengthFolder
     answer = inputdlg(prompt,dlgtitle,dims,definput);
     
     cd (InputFolderList{i})
-    InputFileList=dir(strcat(InputFolderList{i},'\Gaussian-0*.mat'));
+    InputFileList=dir(strcat(InputFolderList{i},'\Gaussian-Max*.mat'));
 
     for j=1:length(InputFileList)
         
