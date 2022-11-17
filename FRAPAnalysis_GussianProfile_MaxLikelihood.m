@@ -126,7 +126,7 @@ for file=1:size(listfile,1)
     % % % % %
     % % OUTPUT FIGURES - MAKE DIST
     if figure_config==1
-        outfolder=strcat(pwd,'\Gaussian-Dist-',name);
+        outfolder=strcat(pwd,'\Gaussian-Dist-Maxlikelihood',name);
         mkdir (outfolder);
         for frame=1:size(im_fit_Data,3)
             f=gcf;
@@ -231,7 +231,7 @@ for file=1:size(listfile,1)
     % % % % % % % % % % % % % % % % % % % % % % % colormap ('jet');
     % % % % % % % % % % % % % % % % % % % % % % % disp(DiffCoef);
 
-    outname=strcat(pwd,'\Gaussian-',name,'.mat');
+    outname=strcat(pwd,'\Gaussian-MaxLikelihood-',name,'.mat');
     save(outname);
 
 end
