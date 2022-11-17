@@ -1,8 +1,7 @@
 % % % % % % % % % % % % % 
 % This input FRAP images (tiff) and determine Diffusion Coefficient with
-% least-square method.
+% maximum likelihood method.
 % % % % % % % % % % % % % 
-
 
 
 
@@ -92,12 +91,12 @@ for file=1:size(listfile,1)
     w=sqrt(FRAPData(1,2)/pi);
     center=round(FRAPData(1,7:8)*pix_size);
     
-%     [Fit_initial_Para,FitPara,Sigma]=...
-%         func_MaxLikelihood_GaussianDist(im_fit_Data(:,:,:),center,0,Interval);
+    % % % FITTING all parameters with maximum likelihood
+    [Fit_initial_Para,FitPara,Sigma]=...
+        func_MaxLikelihood_GaussianDist(im_fit_Data(:,:,:),center,0,Interval);
 
-    % % % FITTING INITIAL PARAMETERS with least square
-    Fit_initial_Para=func_leastsquare_with_GaussianDist_determineInitialPara(im_fit_Data(:,:,1),center);
-    % % % OBTAIN REGRESSION DISTRIBUTION AT T=0
+
+%     % % % OBTAIN REGRESSION DISTRIBUTION AT T=0
     RegressionDist=zeros(size(im_fit_Data,1),size(im_fit_Data,2),size(im_fit_Data,3));
     for k=1:1
         for j=1:size(im_fit_Data,1)
@@ -110,10 +109,8 @@ for file=1:size(listfile,1)
         end
     end
 
-    % % % FITTING DIFFUSION COEFFICIENT WITH INITIAL PARAMETERS with least square
-    FitPara=...
-        func_leastsquare_with_GaussianDist(im_fit_Data(:,:,:),center,Fit_initial_Para,Interval);
-    % % % %
+
+%     % % % %
     DiffCoef=FitPara/pix_size/pix_size;
     % % % OBTAIN REGRESSION DISTRIBUTION AT EACH TIMES
     for k=1:size(im_fit_Data,3)
