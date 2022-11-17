@@ -1,6 +1,7 @@
 % % % % % % % % % % % % % 
-% This input FRAP images (tiff) and determine Diffusion Coefficient with
+% This inputs FRAP images (tiff) and determine Diffusion Coefficient with
 % least-square method.
+% Please prepare all images you want to analyze under same condition in a working folder.
 % % % % % % % % % % % % % 
 
 
