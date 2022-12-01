@@ -53,8 +53,14 @@ ax=gca; ax.FontSize=18; ax.FontName='Arial';
 % ax.XTickLabel={'Cont.', '5' '10' '20'}
 ylabel('Diffusion coefficient \fontname{Times}\itD\rm\fontname{Arial} (μm^2/s)');
 outputfolder=uigetdir(pwd);
-savefig(strcat(outputfolder,'\Result.fig'));
-% exportgraphics(gcf,strcat(outputfolder,'\Result.png'),"Resolution",600);
+prompt = {'Output file name:'};
+dlgtitle = 'Output';
+dims = [1 35];
+definput = {'Result'};
+answer_output = inputdlg(prompt,dlgtitle,dims,definput);
+    
+savefig(strcat(outputfolder,'\',answer_output{1},'.fig'));
+% exportgraphics(gcf,strcat(outputfolder,'\',answer_output{1},'.png'),"Resolution",600);
 
 % [h_lillie,p_lillie,k_lillie,c_lillie] = lillietest(T.DiffusionCoefficient(T.Index=='Control'));
 
@@ -73,4 +79,4 @@ sigma2=(3*M2*D2^2/D1^3)^2*(std(T.DiffusionCoefficient(T.Index=='Rhodamin B')))^2
 sigma_FG=sqrt(sigma2);
 M_FG_RhoB(1,2)=sigma_FG;
 % % % % 
-save(strcat(outputfolder,'\Result.mat'));
+save(strcat(outputfolder,'\',answer_output{1},'.mat'));
