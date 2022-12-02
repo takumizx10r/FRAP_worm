@@ -1,4 +1,4 @@
-% % % Images are converted from .fig to others.
+% % % % Images are converted from .fig to others.
 clear; close all;
 addpath(pwd);
 [input_matimage, path]=uigetfile(strcat(pwd,'\.fig'));

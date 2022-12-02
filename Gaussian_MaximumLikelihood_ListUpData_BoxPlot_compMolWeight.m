@@ -68,14 +68,14 @@ savefig(strcat(outputfolder,'\',answer_output{1},'.fig'));
 % p_wilk=ranksum(T.DiffusionCoefficient(T.Index=='WT (N2)'),T.DiffusionCoefficient(T.Index=='et35'))
 
 [p_anova,tb_anova,stats]=anova1(T.DiffusionCoefficient,T.Index);
-% [results,~,~,~]=multcompare(stats);
+[results,~,~,~]=multcompare(stats);
 % % % % 
 % % Error propagation
-M2=mean(M(T.Index=='Rhodamin B'));
-D2=mean(T.DiffusionCoefficient(T.Index=='Rhodamin B'));
+M2=mean(M(T.Index=='RhoB'));
+D2=mean(T.DiffusionCoefficient(T.Index=='RhoB'));
 D1=mean(T.DiffusionCoefficient(T.Index=='F.G.'));
 M_FG_RhoB(1,1)=M2*( D2/D1 )^3;
-sigma2=(3*M2*D2^2/D1^3)^2*(std(T.DiffusionCoefficient(T.Index=='Rhodamin B')))^2 ...
+sigma2=(3*M2*D2^2/D1^3)^2*(std(T.DiffusionCoefficient(T.Index=='RhoB')))^2 ...
     + (-3*M2*D2^3/D1^4)^2*(std(T.DiffusionCoefficient(T.Index=='F.G.')))^2;
 sigma_FG=sqrt(sigma2);
 M_FG_RhoB(1,2)=sigma_FG;
