@@ -52,6 +52,11 @@ ax=gca; ax.FontSize=18; ax.FontName='Arial';
 % xlabel('Fluorophore')
 % ax.XTickLabel={'Cont.', '5' '10' '20'}
 % ax.XTickLabel={'WT', '\iterm-1::GFP'}
+ax.XTickLabel={'WT', '\iterm-1::GFP','\iterm-1[T544A]::GFP','\iterm-1[T544D]::GFP'}
+% % % hold on
+% % % plot([1 2], [9.5 9.5]*10^-1,'k-');
+% % % plot(1.5,9.65*10^-1,'k*');
+% % % hold off
 ylabel('Diffusion coefficient \fontname{Times}\itD\rm\fontname{Arial} (μm^2/s)');
 outputfolder=uigetdir(pwd);
 prompt = {'Output file name:'};
